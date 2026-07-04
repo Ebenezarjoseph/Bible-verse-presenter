@@ -6,17 +6,22 @@ let controlWindow;
 let displayWindow;
 
 function createWindow(options) {
+  const webPreferences = {
+    contextIsolation: true,
+    nodeIntegration: false,
+    sandbox: false
+  };
+
+  if (options.preload) {
+    webPreferences.preload = options.preload;
+  }
+
   const window = new BrowserWindow({
     width: options.width,
     height: options.height,
     show: options.show !== false,
     frame: options.frame,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,
-      nodeIntegration: false,
-      sandbox: false
-    }
+    webPreferences
   });
 
   window.loadFile(options.file);
@@ -28,7 +33,8 @@ function createWindows() {
     width: 1000,
     height: 700,
     file: path.join(__dirname, '..', 'renderer', 'control.html'),
-    frame: true
+    frame: true,
+    preload: path.join(__dirname, 'controlPreload.js')
   });
 
   displayWindow = createWindow({
@@ -53,6 +59,21 @@ ipcMain.handle('app:show-display', () => {
     displayWindow.show();
     displayWindow.focus();
   }
+});
+
+ipcMain.handle('speech:get-config', (event) => {
+  if (!controlWindow || event.sender !== controlWindow.webContents) {
+    return null;
+  }
+
+  const key = process.env.AZURE_SPEECH_KEY || '';
+  const region = process.env.AZURE_SPEECH_REGION || '';
+
+  if (!key || !region) {
+    return null;
+  }
+
+  return { key, region };
 });
 
 app.whenReady().then(() => {

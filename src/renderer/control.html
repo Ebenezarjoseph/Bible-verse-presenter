@@ -60,6 +60,13 @@
         padding: 16px;
         color: #d1d5db;
       }
+
+      .status-line {
+        margin: 10px 0 0;
+        color: #93c5fd;
+        font-size: 14px;
+        min-height: 20px;
+      }
     </style>
   </head>
   <body>
@@ -70,8 +77,9 @@
         <button id="startListening">Start Listening</button>
         <button id="showDisplay" class="secondary">Show Display</button>
       </div>
+      <div id="speechStatus" class="status-line"></div>
       <div id="transcriptLog" class="transcript-log"></div>
     </main>
-    <script src="control.js"></script>
+    <script type="module" src="control.js"></script>
   </body>
 </html>
