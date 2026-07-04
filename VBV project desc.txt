@@ -1,0 +1,11 @@
+Project Title:
+Bible Verse Presenter Using live Audio Recognition
+
+Problem Statement;
+In modern churches bible verses are being presented on a display ,for this softwares like verseview is used.But the problem in using this software's to display bible verse is ,it takes time and a dedicated Person to operate the system to display. 
+
+Objectives:
+A system that presents A bible verse to an external display by listening to audio of the user saying the bible reference like (genesis 1:1).
+
+Features:
+We can also add the same function for song lyrics

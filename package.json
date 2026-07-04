@@ -1,0 +1,14 @@
+{
+  "name": "voice-bible-verse-presenter",
+  "version": "1.0.0",
+  "description": "Electron scaffold for a Bible verse presenter",
+  "main": "src/main/main.js",
+  "repository": "https://github.com/Ebenezar21/Bible-Verse-Presenter",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "electron": "^30.0.0"
+  }
+}

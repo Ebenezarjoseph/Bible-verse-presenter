@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Control Window</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #111827;
+        color: #f9fafb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+
+      .panel {
+        width: min(720px, calc(100vw - 48px));
+        background: #1f2937;
+        border: 1px solid #374151;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 28px;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 12px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: 0;
+        border-radius: 10px;
+        padding: 12px 18px;
+        font-size: 15px;
+        cursor: pointer;
+        background: #60a5fa;
+        color: #0f172a;
+        font-weight: 700;
+      }
+
+      button.secondary {
+        background: #e5e7eb;
+      }
+
+      .transcript-log {
+        min-height: 220px;
+        border-radius: 12px;
+        border: 1px dashed #4b5563;
+        background: #111827;
+        padding: 16px;
+        color: #d1d5db;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="panel">
+      <h1>Control Window</h1>
+      <p>Ready to start listening and send verses to the display.</p>
+      <div class="buttons">
+        <button id="startListening">Start Listening</button>
+        <button id="showDisplay" class="secondary">Show Display</button>
+      </div>
+      <div id="transcriptLog" class="transcript-log"></div>
+    </main>
+    <script src="control.js"></script>
+  </body>
+</html>
