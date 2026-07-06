@@ -144,7 +144,4 @@ function stopStreaming() {
   disposeRecognizer();
 }
 
-module.exports = {
-  startStreaming,
-  stopStreaming
-};
+export { startStreaming, stopStreaming };
