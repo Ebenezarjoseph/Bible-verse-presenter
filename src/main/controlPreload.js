@@ -6,8 +6,4 @@ contextBridge.exposeInMainWorld('electronAPI', {
   showDisplay: () => ipcRenderer.invoke('app:show-display')
 });
 
-contextBridge.exposeInMainWorld('azureSpeechSDK', {
-  SpeechConfig: SpeechSDK.SpeechConfig,
-  AudioConfig: SpeechSDK.AudioConfig,
-  SpeechRecognizer: SpeechSDK.SpeechRecognizer
-});
+contextBridge.exposeInMainWorld('azureSpeechSDK', SpeechSDK);
