@@ -78,7 +78,35 @@
         <button id="showDisplay" class="secondary">Show Display</button>
       </div>
       <div id="speechStatus" class="status-line"></div>
-      <div id="transcriptLog" class="transcript-log"></div>
+
+      <div style="display:flex;gap:12px;margin-top:12px;align-items:center;">
+        <input id="manualRef" placeholder="Type reference (e.g. John 3:16)" style="flex:1;padding:8px;border-radius:8px;border:1px solid #374151;background:#0f172a;color:#fff;" />
+        <button id="goRef" class="secondary">Go</button>
+      </div>
+
+      <div style="margin-top:14px;padding:12px;border-radius:10px;background:#0b1220;border:1px solid #22303a;">
+        <div style="font-weight:700;margin-bottom:8px">Settings</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <label style="min-width:120px">Translation</label>
+          <select id="translationSelect" style="flex:1;padding:8px;border-radius:6px;background:#0f172a;color:#fff;border:1px solid #374151"></select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+          <label style="min-width:120px">Display</label>
+          <select id="displaySelect" style="flex:1;padding:8px;border-radius:6px;background:#0f172a;color:#fff;border:1px solid #374151"></select>
+          <button id="moveFullscreen" class="secondary">Move + Fullscreen</button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:12px;">
+        <div style="flex:2">
+          <div style="font-weight:700;margin-bottom:8px">Transcripts</div>
+          <div id="transcriptLog" class="transcript-log" aria-live="polite"></div>
+        </div>
+        <div style="flex:1">
+          <div style="font-weight:700;margin-bottom:8px">Verse History</div>
+          <div id="verseHistory" style="min-height:220px;border-radius:12px;border:1px dashed #4b5563;padding:12px;background:#0b1220;overflow:auto;color:#d1d5db"></div>
+        </div>
+      </div>
     </main>
     <script type="module" src="control.js"></script>
   </body>

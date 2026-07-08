@@ -144,28 +144,129 @@ function parseSingleNumber(tokens) {
   return null;
 }
 
-function parseNumberSequence(tokens) {
-  if (tokens.length < 2) {
-    return null;
-  }
+// Known chapter counts for canonical books (used to disambiguate digit splits)
+const CHAPTER_COUNTS = {
+  'Genesis': 50,
+  'Exodus': 40,
+  'Leviticus': 27,
+  'Numbers': 36,
+  'Deuteronomy': 34,
+  'Joshua': 24,
+  'Judges': 21,
+  'Ruth': 4,
+  '1 Samuel': 31,
+  '2 Samuel': 24,
+  '1 Kings': 22,
+  '2 Kings': 25,
+  '1 Chronicles': 29,
+  '2 Chronicles': 36,
+  'Ezra': 10,
+  'Nehemiah': 13,
+  'Esther': 10,
+  'Job': 42,
+  'Psalms': 150,
+  'Proverbs': 31,
+  'Ecclesiastes': 12,
+  'Song of Solomon': 8,
+  'Isaiah': 66,
+  'Jeremiah': 52,
+  'Lamentations': 5,
+  'Ezekiel': 48,
+  'Daniel': 12,
+  'Hosea': 14,
+  'Joel': 3,
+  'Amos': 9,
+  'Obadiah': 1,
+  'Jonah': 4,
+  'Micah': 7,
+  'Nahum': 3,
+  'Habakkuk': 3,
+  'Zephaniah': 3,
+  'Haggai': 2,
+  'Zechariah': 14,
+  'Malachi': 4,
+  'Matthew': 28,
+  'Mark': 16,
+  'Luke': 24,
+  'John': 21,
+  'Acts': 28,
+  'Romans': 16,
+  '1 Corinthians': 16,
+  '2 Corinthians': 13,
+  'Galatians': 6,
+  'Ephesians': 6,
+  'Philippians': 4,
+  'Colossians': 4,
+  '1 Thessalonians': 5,
+  '2 Thessalonians': 3,
+  '1 Timothy': 6,
+  '2 Timothy': 4,
+  'Titus': 3,
+  'Philemon': 1,
+  'Hebrews': 13,
+  'James': 5,
+  '1 Peter': 5,
+  '2 Peter': 3,
+  '1 John': 5,
+  '2 John': 1,
+  '3 John': 1,
+  'Jude': 1,
+  'Revelation': 22
+};
 
+function parseNumberSequence(tokens, bookName) {
   const candidates = [];
 
-  for (let splitIndex = 1; splitIndex < tokens.length; splitIndex += 1) {
-    const chapterTokens = tokens.slice(0, splitIndex);
-    const verseTokens = tokens.slice(splitIndex);
-    const chapter = parseSingleNumber(chapterTokens);
-    const verse = parseSingleNumber(verseTokens);
+  // If there are two or more tokens, try splitting them into chapter/verse
+  if (tokens.length >= 2) {
+    for (let splitIndex = 1; splitIndex < tokens.length; splitIndex += 1) {
+      const chapterTokens = tokens.slice(0, splitIndex);
+      const verseTokens = tokens.slice(splitIndex);
+      const chapter = parseSingleNumber(chapterTokens);
+      const verse = parseSingleNumber(verseTokens);
 
-    if (chapter !== null && verse !== null) {
-      candidates.push({ chapter, verse });
+      if (chapter !== null && verse !== null) {
+        candidates.push({ chapter, verse });
+      }
     }
   }
 
-  if (candidates.length !== 1) {
+  // If there is only a single token, it may be a concatenated numeric like "11"
+  // representing chapter+verse. Try every possible split of digits.
+  if (tokens.length === 1) {
+    const token = tokens[0];
+    if (/^\d+$/.test(token)) {
+      for (let i = 1; i < token.length; i += 1) {
+        const chapStr = token.slice(0, i);
+        const verseStr = token.slice(i);
+        const chapter = parseSingleNumber([chapStr]);
+        const verse = parseSingleNumber([verseStr]);
+        if (chapter !== null && verse !== null) {
+          candidates.push({ chapter, verse });
+        }
+      }
+    }
+  }
+
+  if (candidates.length === 0) {
     return null;
   }
 
+  // If exactly one candidate, return it
+  if (candidates.length === 1) {
+    return candidates[0];
+  }
+
+  // Try to disambiguate using book chapter counts when available
+  if (bookName && CHAPTER_COUNTS[bookName]) {
+    const maxCh = CHAPTER_COUNTS[bookName];
+    const filtered = candidates.filter(c => c.chapter >= 1 && c.chapter <= maxCh);
+    if (filtered.length === 1) return filtered[0];
+    if (filtered.length > 1) candidates.splice(0, candidates.length, ...filtered);
+  }
+
+  // As a tie-breaker, prefer the candidate with the smaller chapter number
+  candidates.sort((a, b) => (a.chapter - b.chapter) || (a.verse - b.verse));
   return candidates[0];
 }
 
@@ -194,7 +295,8 @@ function parseReference(transcript) {
 
   const tokens = tokenize(transcript);
 
-  if (tokens.length < 3) {
+  // require at least book + one numeric token (e.g. "Genesis 1" or "Genesis 1 1")
+  if (tokens.length < 2) {
     return null;
   }
 
@@ -206,7 +308,7 @@ function parseReference(transcript) {
 
   const remainder = tokens.slice(bookMatch.consumedTokens);
 
-  const parsedTail = parseNumberSequence(remainder);
+  const parsedTail = parseNumberSequence(remainder, bookMatch.book);
 
   if (!parsedTail) {
     return null;
